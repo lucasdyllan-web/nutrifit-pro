@@ -43,9 +43,14 @@
   box-sizing: border-box;
 }
 
+img, svg, canvas, video {
+  max-width: 100% !important;
+}
+
 html, body {
   overscroll-behavior: none;
   overscroll-behavior-y: none;
+  overscroll-behavior-x: none !important;
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
   -webkit-touch-callout: none;
@@ -71,6 +76,7 @@ body {
   max-width: 100%;
   overflow-x: clip !important;
   overflow-x: hidden !important;
+  overscroll-behavior-x: none !important;
 }
 
 /* Permite seleção de texto apenas nos campos de formulário */
