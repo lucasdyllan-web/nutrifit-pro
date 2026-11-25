@@ -79,9 +79,40 @@ const app = {
   setupTabs() {
     const tabs = document.querySelectorAll('.nav-tab');
     tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
+      tab.addEventListener('click', (e) => {
+        e.preventDefault();
         const targetId = tab.getAttribute('data-tab');
         this.switchTab(targetId);
+      });
+    });
+
+    // Vincula explicitamente os botões da barra inferior mobile (touch e click rápidos)
+    const mobButtons = document.querySelectorAll('.mobile-nav-btn');
+    mobButtons.forEach(btn => {
+      const tabId = btn.getAttribute('data-mobtab');
+      if (!tabId) return;
+
+      let touchHandled = false;
+
+      btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        touchHandled = true;
+        this.switchTab(tabId);
+        setTimeout(() => { touchHandled = false; }, 350);
+      }, { passive: false });
+
+      btn.addEventListener('click', (e) => {
+        if (touchHandled) return;
+        this.switchTab(tabId);
+      });
+    });
+
+    // Fechar modais ao clicar no fundo escuro (backdrop)
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          backdrop.classList.add('hidden');
+        }
       });
     });
   },
@@ -1625,15 +1656,8 @@ document.addEventListener('gesturestart', (e) => e.preventDefault());
 document.addEventListener('gesturechange', (e) => e.preventDefault());
 document.addEventListener('gestureend', (e) => e.preventDefault());
 
-// 3. Bloqueia zoom por duplo toque rápido
-let lastTouchEnd = 0;
-document.addEventListener('touchend', (e) => {
-  const now = Date.now();
-  if (now - lastTouchEnd <= 300) {
-    e.preventDefault();
-  }
-  lastTouchEnd = now;
-}, { passive: false });
+// 3. Bloqueio de zoom por duplo toque tratado nativamente via CSS touch-action: manipulation
+// (evita bloquear eventos sintéticos de clique nos botões mobile)
 
 // 4. Bloqueia arrasto de imagens e elementos nativos
 document.addEventListener('dragstart', (e) => {
