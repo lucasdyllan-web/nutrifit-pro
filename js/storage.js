@@ -14,43 +14,26 @@ const STORAGE_KEYS = {
 
 const DEFAULT_REALITY_PREFS = {
   mealCount: 4,
-  routineStyle: 'practical',
-  selectedFoodIds: [
-    'arroz_branco', 'feijao_carioca', 'frango_grelhado', 'ovo_mexido',
-    'pao_frances', 'banana_prata', 'aveia_flocos', 'alface_crespa',
-    'tomate_salada', 'azeite_oliva', 'leite_desnatado'
-  ]
+  routineStyle: 'balanced',
+  selectedFoodIds: []
 };
 
 const DEFAULT_PROFILE = {
-  name: 'Carlos Eduardo Silva',
-  age: 32,
+  name: '',
+  age: null,
   gender: 'male',
-  height: 178, // cm
-  weight: 85.0, // kg atual
-  initialWeight: 88.5,
-  targetWeight: 78.0, // kg meta
-  activityLevel: 1.55, // moderadamente ativo
-  goal: 'cut_mod' // emagrecimento moderado (-500 kcal)
+  height: null,
+  weight: null,
+  initialWeight: null,
+  targetWeight: null,
+  activityLevel: 1.55,
+  goal: 'cut_mod',
+  isConfigured: false
 };
 
-const DEFAULT_EXAMS = [
-  { examId: 'glucose', value: 94, date: '2026-10-15', notes: 'Glicemia dentro da faixa ideal' },
-  { examId: 'total_cholesterol', value: 205, date: '2026-10-15', notes: 'Limítrofe leve' },
-  { examId: 'hdl', value: 44, date: '2026-10-15', notes: 'Bom, mas pode melhorar com exercícios aeróbicos' },
-  { examId: 'ldl', value: 132, date: '2026-10-15', notes: 'Atenção ao consumo de gorduras saturadas' },
-  { examId: 'triglycerides', value: 175, date: '2026-10-15', notes: 'Limítrofe. Recomenda-se reduzir carboidratos simples' },
-  { examId: 'vitamin_d', value: 24, date: '2026-10-15', notes: 'Insuficiente. Necessidade de sol e reforço na dieta' },
-  { examId: 'uric_acid', value: 5.6, date: '2026-10-15', notes: 'Excelente' }
-];
+const DEFAULT_EXAMS = [];
 
-const DEFAULT_WEIGHT_HISTORY = [
-  { date: '2026-09-01', weight: 88.5 },
-  { date: '2026-09-15', weight: 87.2 },
-  { date: '2026-10-01', weight: 86.4 },
-  { date: '2026-10-15', weight: 85.8 },
-  { date: '2026-11-01', weight: 85.0 }
-];
+const DEFAULT_WEIGHT_HISTORY = [];
 
 const Storage = {
   // --- PERFIL ---
@@ -77,20 +60,14 @@ const Storage = {
     const all = raw ? JSON.parse(raw) : {};
 
     if (!all[dateStr]) {
-      // Se for o dia de hoje e não houver dados, inicializa com refeições de exemplo
-      const todayStr = new Date().toISOString().split('T')[0];
-      if (dateStr === todayStr) {
-        all[dateStr] = this._generateDefaultTodayMeals();
-        localStorage.setItem(STORAGE_KEYS.DIARY, JSON.stringify(all));
-      } else {
-        all[dateStr] = {
-          breakfast: [],
-          lunch: [],
-          snack: [],
-          dinner: [],
-          supper: []
-        };
-      }
+      all[dateStr] = {
+        breakfast: [],
+        lunch: [],
+        snack: [],
+        dinner: [],
+        supper: []
+      };
+      localStorage.setItem(STORAGE_KEYS.DIARY, JSON.stringify(all));
     }
     return all[dateStr];
   },
@@ -115,28 +92,6 @@ const Storage = {
       meals[mealKey].splice(index, 1);
       this.saveDiary(dateStr, meals);
     }
-  },
-
-  _generateDefaultTodayMeals() {
-    return {
-      breakfast: [
-        { id: 'pao_integral', name: 'Pão Integral 100%', quantity: 50, unit: 'g', kcal: 124, carbs: 20.7, protein: 6.5, fats: 1.7, fiber: 3.5 },
-        { id: 'ovo_mexido', name: 'Ovo Mexido (com fio de azeite)', quantity: 100, unit: 'g', kcal: 168, carbs: 1.0, protein: 12.5, fats: 12.0, fiber: 0 }
-      ],
-      lunch: [
-        { id: 'arroz_integral', name: 'Arroz Integral Cozido', quantity: 150, unit: 'g', kcal: 186, carbs: 38.7, protein: 3.9, fats: 1.5, fiber: 4.0 },
-        { id: 'feijao_carioca', name: 'Feijão Carioca Cozido', quantity: 100, unit: 'g', kcal: 76, carbs: 13.6, protein: 4.8, fats: 0.5, fiber: 8.5 },
-        { id: 'frango_grelhado', name: 'Peito de Frango Grelhado', quantity: 150, unit: 'g', kcal: 239, carbs: 0, protein: 48.0, fats: 3.8, fiber: 0 },
-        { id: 'alface_crespa', name: 'Alface Crespa Fresca', quantity: 50, unit: 'g', kcal: 6, carbs: 0.9, protein: 0.7, fats: 0.1, fiber: 0.9 },
-        { id: 'azeite_oliva', name: 'Azeite de Oliva Extra Virgem', quantity: 10, unit: 'g', kcal: 88, carbs: 0, protein: 0, fats: 10.0, fiber: 0 }
-      ],
-      snack: [
-        { id: 'banana_prata', name: 'Banana Prata', quantity: 100, unit: 'g', kcal: 98, carbs: 26.0, protein: 1.3, fats: 0.1, fiber: 2.0 },
-        { id: 'aveia_flocos', name: 'Aveia em Flocos', quantity: 30, unit: 'g', kcal: 118, carbs: 20.0, protein: 4.2, fats: 2.6, fiber: 2.7 }
-      ],
-      dinner: [],
-      supper: []
-    };
   },
 
   // --- EXAMES ---
