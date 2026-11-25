@@ -50,7 +50,8 @@ html, body {
   -webkit-text-size-adjust: 100%;
   -webkit-touch-callout: none;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
+  overflow-x: clip !important;
   overflow-x: hidden !important;
   position: relative;
 }
@@ -67,7 +68,8 @@ body {
   user-select: none;
   -webkit-user-select: none;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
+  overflow-x: clip !important;
   overflow-x: hidden !important;
 }
 
@@ -1541,7 +1543,8 @@ img, svg, a, button {
   padding: 1.25rem 1.5rem calc(80px + env(safe-area-inset-bottom, 0px)) 1.5rem;
   margin-top: auto;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
+  overflow-x: clip;
   overflow-x: hidden;
 }
 
@@ -1920,9 +1923,10 @@ img, svg, a, button {
    ========================================================================== */
 @media (max-width: 768px) {
   html, body {
+    overflow-x: clip !important;
     overflow-x: hidden !important;
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
   }
 
   /* Oculta abas no topo e exibe barra inferior com polegar */
@@ -1940,7 +1944,10 @@ img, svg, a, button {
     padding-right: 0.75rem;
     padding-top: 0.85rem;
     padding-bottom: 1.5rem;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: clip !important;
     overflow-x: hidden !important;
   }
 
