@@ -1670,3 +1670,16 @@ document.addEventListener('dragstart', (e) => {
     e.preventDefault();
   }
 });
+
+// 5. Bloqueio total de rolagem horizontal (mantém a tela 100% fixa sem deslocamento lateral)
+window.addEventListener('scroll', () => {
+  if (window.scrollX !== 0) {
+    window.scrollTo(0, window.scrollY);
+  }
+}, { passive: true });
+
+document.addEventListener('wheel', (e) => {
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+    e.preventDefault();
+  }
+}, { passive: false });
