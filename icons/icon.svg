@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Fundo Arredondado com Sombra Suave -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <rect width="512" height="256" rx="128" fill="url(#glowGrad)"/>
+
+  <!-- Ícone Central: Tigela/Folha + Gráfico Preditivo em Alta Definição -->
+  <g fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Folha / Vitalidade -->
+    <path d="M 256 110 C 330 110 390 170 390 244 C 390 320 256 390 256 390 C 256 390 122 320 122 244 C 122 170 182 110 256 110 Z" fill="#ffffff" fill-opacity="0.12"/>
+    
+    <!-- Linha de Pulso / Projeção Preditiva -->
+    <path d="M 140 260 L 205 260 L 235 190 L 275 320 L 305 240 L 330 260 L 372 260" stroke="#ffffff" stroke-width="30"/>
+
+    <!-- Ponto de Meta em Destaque -->
+    <circle cx="372" cy="260" r="14" fill="#f59e0b" stroke="#ffffff" stroke-width="8"/>
+  </g>
+</svg>
