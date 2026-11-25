@@ -1222,6 +1222,15 @@ img, svg, a, button {
   flex-direction: column;
   box-shadow: var(--shadow-lg);
   animation: modalScale 0.2s ease-out;
+  overflow: hidden;
+}
+
+.modal-card > form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 @keyframes modalScale {
@@ -1254,9 +1263,12 @@ img, svg, a, button {
 .modal-body {
   padding: 1.4rem;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-footer {
@@ -1265,6 +1277,8 @@ img, svg, a, button {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
+  flex-shrink: 0;
+  background: white;
 }
 
 .tab-subnav {
