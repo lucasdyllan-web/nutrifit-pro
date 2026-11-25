@@ -3,7 +3,7 @@
  * Estratégia Stale-While-Revalidate para funcionamento 100% offline em qualquer rede
  */
 
-const CACHE_NAME = 'nutrifit-v1.5';
+const CACHE_NAME = 'nutrifit-v1.6';
 
 const STATIC_ASSETS = [
   './',
