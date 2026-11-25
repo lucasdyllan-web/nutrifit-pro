@@ -831,6 +831,7 @@
           <h3>👋 Boas-vindas ao NutriFit Pro!</h3>
           <p class="text-xs text-muted">Vamos configurar o seu perfil para calcular seu gasto calórico, montar sua projeção e gerar seus cardápios sob medida.</p>
         </div>
+        <button type="button" class="modal-close" onclick="app.closeModal('onboardingModal')" aria-label="Fechar">&times;</button>
       </div>
       <form id="onboardingForm" onsubmit="app.handleOnboardingSubmit(event)">
         <div class="modal-body">
@@ -945,9 +946,12 @@
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary w-full" style="font-size: 1rem; padding: 0.85rem;">
-            🚀 Concluir & Gerar Meu Plano Completo
+        <div class="modal-footer" style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('onboardingModal')" style="flex: 1; min-width: 130px;">
+            Explorar Primeiro
+          </button>
+          <button type="submit" class="btn btn-primary" style="flex: 2; min-width: 180px; font-size: 0.95rem; padding: 0.85rem;">
+            🚀 Concluir & Gerar Meu Plano
           </button>
         </div>
       </form>
@@ -973,23 +977,23 @@
 
   <!-- BARRA DE NAVEGAÇÃO INFERIOR PARA DISPOSITIVOS MÓVEIS (Thumb navigation) -->
   <nav class="mobile-bottom-nav" id="mobileBottomNav">
-    <button class="mobile-nav-btn active" data-mobtab="tab-dashboard" onclick="app.switchTab('tab-dashboard')">
+    <button type="button" class="mobile-nav-btn active" data-mobtab="tab-dashboard" onclick="app.switchTab('tab-dashboard')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       <span>Início</span>
     </button>
-    <button class="mobile-nav-btn" data-mobtab="tab-diary" onclick="app.switchTab('tab-diary')">
+    <button type="button" class="mobile-nav-btn" data-mobtab="tab-diary" onclick="app.switchTab('tab-diary')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
       <span>Diário</span>
     </button>
-    <button class="mobile-nav-btn" data-mobtab="tab-reality" onclick="app.switchTab('tab-reality')">
+    <button type="button" class="mobile-nav-btn" data-mobtab="tab-reality" onclick="app.switchTab('tab-reality')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
       <span>Realidade</span>
     </button>
-    <button class="mobile-nav-btn" data-mobtab="tab-profile-exams" onclick="app.switchTab('tab-profile-exams')">
+    <button type="button" class="mobile-nav-btn" data-mobtab="tab-profile-exams" onclick="app.switchTab('tab-profile-exams')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
       <span>Exames</span>
     </button>
-    <button class="mobile-nav-btn" data-mobtab="tab-projections" onclick="app.switchTab('tab-projections')">
+    <button type="button" class="mobile-nav-btn" data-mobtab="tab-projections" onclick="app.switchTab('tab-projections')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
       <span>Projeção</span>
     </button>
@@ -1022,7 +1026,10 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker registrado:', reg.scope))
+          .then((reg) => {
+            console.log('Service Worker registrado:', reg.scope);
+            reg.update(); // Garante atualização imediata dos novos arquivos
+          })
           .catch((err) => console.log('Falha ao registrar Service Worker:', err));
       });
     }
