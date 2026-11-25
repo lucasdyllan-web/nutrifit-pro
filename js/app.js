@@ -21,6 +21,11 @@ const app = {
     this.setupTabs();
     this.renderAll();
 
+    // Se o perfil for novo/zerado, abre automaticamente o assistente de onboarding
+    if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
+      setTimeout(() => this.openOnboardingModal(), 350);
+    }
+
     // Redimensionamento do gráfico responsivo
     window.addEventListener('resize', () => {
       if (document.getElementById('tab-projections').classList.contains('active')) {
@@ -112,20 +117,30 @@ const app = {
   // ==========================================
   renderHeader() {
     const summaryContainer = document.getElementById('headerUserSummary');
-    if (!summaryContainer || !this.profile) return;
+    if (!summaryContainer) return;
 
-    const diff = Number((this.profile.weight - this.profile.targetWeight).toFixed(1));
-    const diffSign = diff > 0 ? `-${diff} kg para a meta` : diff < 0 ? `+${Math.abs(diff)} kg para a meta` : 'Meta alcançada!';
+    if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
+      summaryContainer.innerHTML = `
+        <div class="user-quick-pill" onclick="app.openOnboardingModal()" style="cursor: pointer;" title="Clique para começar">
+          <span class="dot-active" style="background: #f59e0b;"></span>
+          <span>👋 Novo Perfil &bull; <strong>Começar Configuração</strong></span>
+        </div>
+      `;
+    } else {
+      const diff = Number((this.profile.weight - this.profile.targetWeight).toFixed(1));
+      const diffSign = diff > 0 ? `-${diff} kg para a meta` : diff < 0 ? `+${Math.abs(diff)} kg para a meta` : 'Meta alcançada!';
+      const firstName = (this.profile.name || 'Você').trim().split(' ')[0] || 'Você';
 
-    summaryContainer.innerHTML = `
-      <div class="user-quick-pill">
-        <span class="dot-active"></span>
-        <span><strong>${this.profile.name.split(' ')[0]}</strong> (${this.profile.weight} kg)</span>
-      </div>
-      <div class="user-quick-pill">
-        <span>🎯 Meta: <strong>${this.profile.targetWeight} kg</strong> <span class="text-xs text-muted">(${diffSign})</span></span>
-      </div>
-    `;
+      summaryContainer.innerHTML = `
+        <div class="user-quick-pill">
+          <span class="dot-active"></span>
+          <span><strong>${firstName}</strong> (${this.profile.weight} kg)</span>
+        </div>
+        <div class="user-quick-pill">
+          <span>🎯 Meta: <strong>${this.profile.targetWeight} kg</strong> <span class="text-xs text-muted">(${diffSign})</span></span>
+        </div>
+      `;
+    }
 
     // Atualiza label da data
     const dateDisplayLabel = document.getElementById('dateDisplayLabel');
@@ -144,6 +159,52 @@ const app = {
   // DASHBOARD
   // ==========================================
   renderDashboard() {
+    const zeroBanner = document.getElementById('dashboardWelcomeZeroBanner');
+    const alertBanner = document.getElementById('dashboardHealthAlertBanner');
+
+    // Se o perfil não estiver configurado / zerado
+    if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
+      if (zeroBanner) zeroBanner.classList.remove('hidden');
+      if (alertBanner) alertBanner.classList.add('hidden');
+
+      document.getElementById('goalTypeBadge').textContent = 'Aguardando Perfil';
+      document.getElementById('calGoalVal').textContent = '0 kcal';
+      document.getElementById('calConsumedVal').textContent = '0 kcal';
+      document.getElementById('calTdeeVal').textContent = '0 kcal';
+      document.getElementById('calDeficitVal').textContent = '0 kcal';
+
+      document.getElementById('calRemainingVal').textContent = '0';
+      document.getElementById('calRemainingLabel').textContent = 'kcal meta';
+
+      this._updateMacroBar('carb', 0, 0);
+      this._updateMacroBar('prot', 0, 0);
+      this._updateMacroBar('fat', 0, 0);
+      this._updateMacroBar('fiber', 0, 0);
+
+      document.getElementById('waterGoalBadge').textContent = '0 ml meta';
+      document.getElementById('waterCurrentVal').textContent = '0';
+      document.getElementById('waterTargetLabel').textContent = 'de 0 ml';
+
+      document.getElementById('dashCurrentWeight').textContent = '-- kg';
+      document.getElementById('dashWeightDiff').textContent = 'Meta: -- kg';
+      document.getElementById('dashHeight').textContent = '-- cm';
+      document.getElementById('dashBmi').textContent = '--';
+      const bmiStatusEl = document.getElementById('dashBmiStatus');
+      bmiStatusEl.textContent = 'Não configurado';
+      bmiStatusEl.className = 'bio-box-sub text-muted';
+
+      document.getElementById('dashExamsCount').textContent = '0 cadastrados';
+      document.getElementById('dashExamsStatus').textContent = 'Aguardando dados';
+
+      document.getElementById('previewForecastHighlight').textContent = 'Aguardando seus dados';
+      document.getElementById('previewForecastDetails').textContent = 'Preencha suas informações para calcular sua projeção.';
+
+      this.renderMealsDashboardSummary();
+      return;
+    }
+
+    if (zeroBanner) zeroBanner.classList.add('hidden');
+
     // 1. Cálculos de metas do perfil
     const bmr = NutritionCalc.calculateBMR(this.profile.weight, this.profile.height, this.profile.age, this.profile.gender);
     const tdee = NutritionCalc.calculateTDEE(bmr, this.profile.activityLevel);
@@ -395,13 +456,13 @@ const app = {
   // ==========================================
   renderProfileAndExams() {
     // 1. Preenche inputs do formulário de perfil
-    if (this.profile) {
+    if (this.profile && this.profile.isConfigured && this.profile.weight) {
       document.getElementById('profName').value = this.profile.name || '';
-      document.getElementById('profAge').value = this.profile.age || 30;
+      document.getElementById('profAge').value = this.profile.age || '';
       document.getElementById('profGender').value = this.profile.gender || 'male';
-      document.getElementById('profHeight').value = this.profile.height || 175;
-      document.getElementById('profWeight').value = this.profile.weight || 75;
-      document.getElementById('profTargetWeight').value = this.profile.targetWeight || 70;
+      document.getElementById('profHeight').value = this.profile.height || '';
+      document.getElementById('profWeight').value = this.profile.weight || '';
+      document.getElementById('profTargetWeight').value = this.profile.targetWeight || '';
       document.getElementById('profActivity').value = this.profile.activityLevel || '1.55';
       document.getElementById('profGoal').value = this.profile.goal || 'cut_mod';
 
@@ -414,6 +475,17 @@ const app = {
       document.getElementById('calcTdeeVal').textContent = `${tdee} kcal`;
       document.getElementById('calcBmiClassVal').textContent = `${bmiInfo.bmi} (${bmiInfo.classification})`;
       document.getElementById('calcIdealWeightRange').textContent = `Faixa de peso saudável recomendada: ${bmiInfo.idealMinWeight} kg a ${bmiInfo.idealMaxWeight} kg`;
+    } else {
+      document.getElementById('profName').value = '';
+      document.getElementById('profAge').value = '';
+      document.getElementById('profGender').value = 'male';
+      document.getElementById('profHeight').value = '';
+      document.getElementById('profWeight').value = '';
+      document.getElementById('profTargetWeight').value = '';
+      document.getElementById('calcBmrVal').textContent = '-- kcal';
+      document.getElementById('calcTdeeVal').textContent = '-- kcal';
+      document.getElementById('calcBmiClassVal').textContent = '--';
+      document.getElementById('calcIdealWeightRange').textContent = 'Informe sua altura e peso para calcular';
     }
 
     // 2. Renderiza lista de exames laboratoriais
@@ -505,6 +577,22 @@ const app = {
   // PROJEÇÃO FUTURA DOS PRÓXIMOS DIAS
   // ==========================================
   renderProjections() {
+    if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
+      const banner = document.getElementById('forecastMilestoneBanner');
+      if (banner) {
+        banner.innerHTML = `
+          <div class="forecast-main-headline">
+            <h3>Projeção Preditiva de Peso</h3>
+            <p>Preencha suas informações de peso, altura e meta no seu perfil para gerarmos sua curva de evolução dos próximos 90 dias.</p>
+          </div>
+          <button class="btn btn-outline" style="color: white; border-color: white;" onclick="app.openOnboardingModal()">Preencher Meus Dados</button>
+        `;
+      }
+      const cardsGrid = document.getElementById('projectionCardsGrid');
+      if (cardsGrid) cardsGrid.innerHTML = '';
+      return;
+    }
+
     const bmr = NutritionCalc.calculateBMR(this.profile.weight, this.profile.height, this.profile.age, this.profile.gender);
     const tdee = NutritionCalc.calculateTDEE(bmr, this.profile.activityLevel);
     const { targetCalories } = NutritionCalc.calculateCalorieGoal(tdee, this.profile.goal);
@@ -874,6 +962,21 @@ const app = {
   },
 
   generateAndShowRealityDiet(showFeedback = true) {
+    if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
+      const banner = document.getElementById('realityPrecisionBanner');
+      if (banner) {
+        banner.innerHTML = `
+          <div style="padding: 1.25rem; color: #065f46; font-size: 0.9rem; text-align: center; width: 100%;">
+            👋 <strong>Configuração necessária:</strong> Preencha suas informações de peso e altura para que possamos balancear as porções exatas das suas comidas!
+            <div class="mt-3">
+              <button class="btn btn-primary btn-sm" onclick="app.openOnboardingModal()">Preencher Meus Dados</button>
+            </div>
+          </div>
+        `;
+      }
+      return;
+    }
+
     const bmr = NutritionCalc.calculateBMR(this.profile.weight, this.profile.height, this.profile.age, this.profile.gender);
     const tdee = NutritionCalc.calculateTDEE(bmr, this.profile.activityLevel);
     const { targetCalories } = NutritionCalc.calculateCalorieGoal(tdee, this.profile.goal);
@@ -1007,6 +1110,18 @@ const app = {
   renderMealPlan() {
     const container = document.getElementById('suggestedMealPlanContainer');
     if (!container) return;
+
+    if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 2.5rem; text-align: center; color: #94a3b8; background: white; border-radius: var(--radius-md); border: 1px dashed var(--border-color);">
+          <span style="font-size: 2rem;">🥗</span>
+          <h4 style="margin: 0.5rem 0; color: #1e293b;">Aguardando Configuração do Perfil</h4>
+          <p style="font-size: 0.85rem;">O cardápio inteligente será gerado assim que você informar seu peso, altura e objetivo.</p>
+          <button class="btn btn-primary btn-sm mt-3" onclick="app.openOnboardingModal()">Preencher Meus Dados</button>
+        </div>
+      `;
+      return;
+    }
 
     const bmr = NutritionCalc.calculateBMR(this.profile.weight, this.profile.height, this.profile.age, this.profile.gender);
     const tdee = NutritionCalc.calculateTDEE(bmr, this.profile.activityLevel);
@@ -1326,8 +1441,165 @@ const app = {
     reader.readAsText(file);
   },
 
+  // ==========================================
+  // ONBOARDING & NOVO USUÁRIO ZERADO
+  // ==========================================
+  openOnboardingModal() {
+    const modal = document.getElementById('onboardingModal');
+    if (!modal) return;
+
+    // Popula chips de alimentos populares para a etapa 2
+    const chipsContainer = document.getElementById('onboardingFoodChips');
+    if (chipsContainer) {
+      const popularFoodIds = [
+        'arroz_branco', 'feijao_carioca', 'frango_grelhado', 'ovo_mexido',
+        'pao_frances', 'pao_integral', 'banana_prata', 'aveia_flocos',
+        'batata_doce', 'alface_crespa', 'tomate_salada', 'azeite_oliva',
+        'leite_desnatado', 'iogurte_natural_desn', 'queijo_minas_frescal'
+      ];
+
+      const currentSelected = this.realityPrefs?.selectedFoodIds || [];
+
+      chipsContainer.innerHTML = popularFoodIds.map(fId => {
+        const food = FOODS_DATABASE.find(f => f.id === fId);
+        if (!food) return '';
+        const isSelected = currentSelected.includes(food.id);
+        return `
+          <button type="button" class="food-chip ${isSelected ? 'selected' : ''}" onclick="app.toggleOnboardingFood('${food.id}', this)">
+            <span class="chip-check">${isSelected ? '✓' : ''}</span>
+            <span>${food.name}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    // Se já tiver dados no perfil, preenche inputs
+    if (this.profile && this.profile.isConfigured) {
+      document.getElementById('onbName').value = this.profile.name || '';
+      document.getElementById('onbAge').value = this.profile.age || '';
+      document.getElementById('onbGender').value = this.profile.gender || 'male';
+      document.getElementById('onbHeight').value = this.profile.height || '';
+      document.getElementById('onbWeight').value = this.profile.weight || '';
+      document.getElementById('onbTargetWeight').value = this.profile.targetWeight || '';
+      document.getElementById('onbActivity').value = this.profile.activityLevel || '1.55';
+      document.getElementById('onbGoal').value = this.profile.goal || 'cut_mod';
+    }
+
+    modal.classList.remove('hidden');
+  },
+
+  toggleOnboardingFood(foodId, buttonEl) {
+    if (!this.realityPrefs) this.realityPrefs = Storage.getRealityPrefs();
+    if (!this.realityPrefs.selectedFoodIds) this.realityPrefs.selectedFoodIds = [];
+
+    const idx = this.realityPrefs.selectedFoodIds.indexOf(foodId);
+    if (idx >= 0) {
+      this.realityPrefs.selectedFoodIds.splice(idx, 1);
+      buttonEl.classList.remove('selected');
+      buttonEl.querySelector('.chip-check').textContent = '';
+    } else {
+      this.realityPrefs.selectedFoodIds.push(foodId);
+      buttonEl.classList.add('selected');
+      buttonEl.querySelector('.chip-check').textContent = '✓';
+    }
+  },
+
+  setOnboardingPreset(preset) {
+    let ids = [];
+    if (preset === 'brazilian') {
+      ids = ['arroz_branco', 'feijao_carioca', 'frango_grelhado', 'ovo_mexido', 'pao_frances', 'banana_prata', 'aveia_flocos', 'alface_crespa', 'tomate_salada', 'azeite_oliva'];
+    } else if (preset === 'budget') {
+      ids = ['arroz_branco', 'feijao_carioca', 'ovo_mexido', 'frango_desfiado', 'banana_prata', 'batata_inglesa', 'aveia_flocos', 'alface_crespa'];
+    } else if (preset === 'fitness') {
+      ids = ['arroz_integral', 'feijao_preto', 'frango_grelhado', 'ovo_cozido', 'whey_protein', 'batata_doce', 'aveia_flocos', 'banana_prata', 'azeite_oliva'];
+    }
+
+    if (!this.realityPrefs) this.realityPrefs = Storage.getRealityPrefs();
+    this.realityPrefs.selectedFoodIds = ids;
+
+    // Atualiza visual dos botões no onboarding
+    const container = document.getElementById('onboardingFoodChips');
+    if (container) {
+      container.querySelectorAll('.food-chip').forEach(btn => {
+        const onClickAttr = btn.getAttribute('onclick') || '';
+        const match = onClickAttr.match(/'([^']+)'/);
+        if (match && match[1]) {
+          const fId = match[1];
+          const isSelected = ids.includes(fId);
+          btn.classList.toggle('selected', isSelected);
+          btn.querySelector('.chip-check').textContent = isSelected ? '✓' : '';
+        }
+      });
+    }
+  },
+
+  handleOnboardingSubmit(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('onbName').value.trim();
+    const age = parseInt(document.getElementById('onbAge').value, 10);
+    const gender = document.getElementById('onbGender').value;
+    const height = parseFloat(document.getElementById('onbHeight').value);
+    const weight = parseFloat(document.getElementById('onbWeight').value);
+    const targetWeight = parseFloat(document.getElementById('onbTargetWeight').value);
+    const activityLevel = parseFloat(document.getElementById('onbActivity').value);
+    const goal = document.getElementById('onbGoal').value;
+
+    if (!name || isNaN(weight) || isNaN(height) || isNaN(targetWeight)) {
+      alert('Por favor preencha todos os campos obrigatórios de nome, peso, altura e meta.');
+      return;
+    }
+
+    // Se nenhuma comida foi selecionada no onboarding, define os básicos
+    if (!this.realityPrefs || !this.realityPrefs.selectedFoodIds || this.realityPrefs.selectedFoodIds.length === 0) {
+      if (!this.realityPrefs) this.realityPrefs = Storage.getRealityPrefs();
+      this.realityPrefs.selectedFoodIds = ['arroz_branco', 'feijao_carioca', 'frango_grelhado', 'ovo_mexido', 'pao_frances', 'banana_prata', 'aveia_flocos', 'alface_crespa', 'tomate_salada', 'azeite_oliva'];
+    }
+
+    this.profile = {
+      name,
+      age,
+      gender,
+      height,
+      weight,
+      initialWeight: weight,
+      targetWeight,
+      activityLevel,
+      goal,
+      isConfigured: true
+    };
+
+    Storage.saveProfile(this.profile);
+    Storage.addWeightRecord(this.currentDate, weight);
+    Storage.saveRealityPrefs(this.realityPrefs);
+
+    // Salva exames opcionais preenchidos
+    const glucoseVal = parseFloat(document.getElementById('onbGlucose').value);
+    const trigVal = parseFloat(document.getElementById('onbTriglycerides').value);
+    const ldlVal = parseFloat(document.getElementById('onbLdl').value);
+    const vitDVal = parseFloat(document.getElementById('onbVitD').value);
+
+    if (!isNaN(glucoseVal)) Storage.upsertExam({ examId: 'glucose', value: glucoseVal, date: this.currentDate, notes: 'Informado no cadastro' });
+    if (!isNaN(trigVal)) Storage.upsertExam({ examId: 'triglycerides', value: trigVal, date: this.currentDate, notes: 'Informado no cadastro' });
+    if (!isNaN(ldlVal)) Storage.upsertExam({ examId: 'ldl', value: ldlVal, date: this.currentDate, notes: 'Informado no cadastro' });
+    if (!isNaN(vitDVal)) Storage.upsertExam({ examId: 'vitamin_d', value: vitDVal, date: this.currentDate, notes: 'Informado no cadastro' });
+
+    this.exams = Storage.getExams();
+
+    this.closeModal('onboardingModal');
+    this.renderAll();
+
+    alert(`🎉 Bem-vindo(a), ${name.split(' ')[0]}!\nSeu plano nutricional, gasto energético, projeção para os próximos 90 dias e cardápios foram calculados com sucesso com base nas suas medidas e na sua realidade alimentar!`);
+  },
+
+  resetToNewUser() {
+    if (confirm('Tem certeza de que deseja zerar todos os dados e começar como um novo usuário do zero?')) {
+      Storage.resetDemo();
+    }
+  },
+
   resetDemoData() {
-    if (confirm('Tem certeza de que deseja restaurar os dados de demonstração originais?')) {
+    if (confirm('Tem certeza de que deseja restaurar os dados e começar como um novo usuário zerado?')) {
       Storage.resetDemo();
     }
   }
