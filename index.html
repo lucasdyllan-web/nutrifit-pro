@@ -519,10 +519,10 @@
               <span id="simDeficitDisplay" class="text-primary font-bold">0 kcal/dia</span>
             </label>
             <input type="range" id="simDeficitSlider" min="-500" max="500" step="50" value="0" class="range-slider" oninput="app.updateSimulation()">
-            <div class="flex-between text-xs text-muted">
-              <span>Comer mais (+500 kcal)</span>
-              <span>Manter plano</span>
-              <span>Déficit extra (-500 kcal)</span>
+            <div class="flex-between text-xs text-muted" style="font-size: 0.72rem;">
+              <span>+500 kcal</span>
+              <span>Plano (0)</span>
+              <span>-500 kcal</span>
             </div>
 
             <div class="mt-4">
@@ -531,11 +531,11 @@
                 <span id="simExerciseDisplay" class="text-emerald font-bold">0 min/dia</span>
               </label>
               <input type="range" id="simExerciseMins" min="0" max="90" step="15" value="0" class="range-slider" oninput="app.updateSimulation()">
-              <div class="flex-between text-xs text-muted">
+              <div class="flex-between text-xs text-muted" style="font-size: 0.72rem;">
                 <span>0 min</span>
-                <span>30 min (+200 kcal)</span>
-                <span>60 min (+400 kcal)</span>
-                <span>90 min (+600 kcal)</span>
+                <span>+30 min</span>
+                <span>+60 min</span>
+                <span>+90 min</span>
               </div>
             </div>
           </div>
