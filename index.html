@@ -777,19 +777,10 @@
             <label for="examTypeSelect">Tipo de Biomarcador</label>
             <select id="examTypeSelect" class="form-input" onchange="app.onExamTypeChange(this.value)">
               <option value="glucose">Glicemia de Jejum (mg/dL)</option>
-              <option value="hba1c">Hemoglobina Glicada - HbA1c (%)</option>
               <option value="total_cholesterol">Colesterol Total (mg/dL)</option>
-              <option value="hdl">Colesterol HDL - "Bom" (mg/dL)</option>
-              <option value="ldl">Colesterol LDL - "Ruim" (mg/dL)</option>
               <option value="triglycerides">Triglicerídeos (mg/dL)</option>
-              <option value="uric_acid">Ácido Úrico (mg/dL)</option>
-              <option value="vitamin_d">Vitamina D 25-OH (ng/mL)</option>
+              <option value="vitamin_d">Vitamina D (25-OH) (ng/mL)</option>
               <option value="vitamin_b12">Vitamina B12 (pg/mL)</option>
-              <option value="ferritin">Ferritina (ng/mL)</option>
-              <option value="tgo_ast">TGO / AST - Fígado (U/L)</option>
-              <option value="tgp_alt">TGP / ALT - Fígado (U/L)</option>
-              <option value="creatinine">Creatinina - Rim (mg/dL)</option>
-              <option value="crp">Proteína C Reativa (PCR) - Inflamação (mg/L)</option>
             </select>
           </div>
 
@@ -920,7 +911,7 @@
           <div class="onboarding-step-box mt-3">
             <h4 class="onboarding-step-title">
               <span class="step-num">3</span>
-              Seus Exames de Sangue (Opcional)
+              Seus 5 Exames de Sangue Essenciais (Opcional)
             </h4>
             <p class="text-xs text-muted mb-2">Se tiver feito exames laboratoriais recentemente, informe os valores. Caso contrário, você poderá adicionar a qualquer momento depois:</p>
             <div class="form-row">
@@ -929,19 +920,23 @@
                 <input type="number" step="0.1" id="onbGlucose" class="form-input" placeholder="Ex: 92 (Opcional)">
               </div>
               <div class="form-group">
-                <label for="onbTriglycerides">Triglicerídeos (mg/dL)</label>
-                <input type="number" step="0.1" id="onbTriglycerides" class="form-input" placeholder="Ex: 140 (Opcional)">
+                <label for="onbTotalCholesterol">Colesterol Total (mg/dL)</label>
+                <input type="number" step="0.1" id="onbTotalCholesterol" class="form-input" placeholder="Ex: 180 (Opcional)">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="onbLdl">Colesterol LDL (mg/dL)</label>
-                <input type="number" step="0.1" id="onbLdl" class="form-input" placeholder="Ex: 115 (Opcional)">
+                <label for="onbTriglycerides">Triglicerídeos (mg/dL)</label>
+                <input type="number" step="0.1" id="onbTriglycerides" class="form-input" placeholder="Ex: 140 (Opcional)">
               </div>
               <div class="form-group">
                 <label for="onbVitD">Vitamina D 25-OH (ng/mL)</label>
-                <input type="number" step="0.1" id="onbVitD" class="form-input" placeholder="Ex: 32 (Opcional)">
+                <input type="number" step="0.1" id="onbVitD" class="form-input" placeholder="Ex: 35 (Opcional)">
               </div>
+            </div>
+            <div class="form-group">
+              <label for="onbVitB12">Vitamina B12 (pg/mL)</label>
+              <input type="number" step="0.1" id="onbVitB12" class="form-input" placeholder="Ex: 450 (Opcional)">
             </div>
           </div>
         </div>
