@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>NutriFit Pro - Dieta, Nutrição & Projeção</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <meta name="theme-color" content="#059669">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NutriFit Pro">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Fontes & Estilos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Chart.js para gráficos interativos com fallback nativo -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <!-- TOPO / CABEÇALHO -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a9 9 0 0 1 9 9c0 4.97-4.03 9-9 9A9 9 0 0 1 3 11a9 9 0 0 1 9-9z"></path>
+            <path d="M12 7v5l3 3"></path>
+            <path d="M16 2.5a5 5 0 0 1 5.5 5.5"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">NutriFit Pro</h1>
+          <p class="brand-subtitle">Dieta inteligente, exames & projeção preditiva</p>
+        </div>
+      </div>
+
+      <div class="header-user-summary" id="headerUserSummary">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </div>
+
+    <!-- NAVEGAÇÃO POR ABAS -->
+    <nav class="nav-tabs">
+      <div class="nav-container">
+        <button class="nav-tab active" data-tab="tab-dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard Diário
+        </button>
+        <button class="nav-tab" data-tab="tab-diary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          Diário Alimentar
+        </button>
+        <button class="nav-tab" data-tab="tab-profile-exams">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          Perfil & Exames
+        </button>
+        <button class="nav-tab" data-tab="tab-projections">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+          Projeção Futura
+        </button>
+        <button class="nav-tab" data-tab="tab-reality">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          Minha Realidade Alimentar
+        </button>
+        <button class="nav-tab" data-tab="tab-mealplan">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+          Cardápio Recomendado
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-content">
+
+    <!-- ============================================== -->
+    <!-- ABA 1: DASHBOARD DIÁRIO                        -->
+    <!-- ============================================== -->
+    <section id="tab-dashboard" class="tab-pane active">
+      <!-- Seletor de data e calorias gerais -->
+      <div class="date-bar">
+        <button class="btn btn-icon" id="btnPrevDay" title="Dia anterior">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="current-date-info">
+          <input type="date" id="selectedDateInput" class="date-picker-input">
+          <span id="dateDisplayLabel" class="date-label">Hoje</span>
+        </div>
+        <button class="btn btn-icon" id="btnNextDay" title="Próximo dia">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btnGoToday">Ir para Hoje</button>
+      </div>
+
+      <!-- Banner de Alerta de Exames (se houver alteração) -->
+      <div id="dashboardHealthAlertBanner" class="health-alert-banner hidden">
+        <!-- Injetado dinamicamente -->
+      </div>
+
+      <!-- Grid de Métricas Principais -->
+      <div class="dashboard-grid">
+        <!-- Card 1: Balanço Calórico -->
+        <div class="card card-calories">
+          <div class="card-header">
+            <h3>Balanço Calórico do Dia</h3>
+            <span class="badge badge-meta" id="goalTypeBadge">Emagrecimento</span>
+          </div>
+          <div class="calorie-summary-wrapper">
+            <div class="calorie-circle-container">
+              <div class="calorie-circle" id="calorieProgressCircle">
+                <div class="calorie-circle-inner">
+                  <span class="cal-number" id="calRemainingVal">0</span>
+                  <span class="cal-label" id="calRemainingLabel">kcal restantes</span>
+                </div>
+              </div>
+            </div>
+            <div class="calorie-breakdown">
+              <div class="cal-stat-item">
+                <span class="cal-stat-label">Meta Diária:</span>
+                <span class="cal-stat-val text-primary" id="calGoalVal">0 kcal</span>
+              </div>
+              <div class="cal-stat-item">
+                <span class="cal-stat-label">Consumidas:</span>
+                <span class="cal-stat-val text-emerald" id="calConsumedVal">0 kcal</span>
+              </div>
+              <div class="cal-stat-item">
+                <span class="cal-stat-label">Gasto Total (GET):</span>
+                <span class="cal-stat-val" id="calTdeeVal">0 kcal</span>
+              </div>
+              <div class="cal-stat-item border-top">
+                <span class="cal-stat-label font-bold">Déficit Previsto:</span>
+                <span class="cal-stat-val font-bold" id="calDeficitVal">-500 kcal</span>
+              </div>
+            </div>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" id="calorieProgressBar" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Distribuição de Macronutrientes -->
+        <div class="card card-macros">
+          <div class="card-header">
+            <h3>Macronutrientes</h3>
+            <span class="text-xs text-muted">Gramas & Percentual</span>
+          </div>
+          <div class="macros-grid">
+            <!-- Carboidratos -->
+            <div class="macro-bar-card carb-card">
+              <div class="macro-meta">
+                <span class="macro-title">Carboidratos</span>
+                <span class="macro-values" id="carbVal">0g / 0g</span>
+              </div>
+              <div class="macro-progress"><div class="bar-fill carb-fill" id="carbBar"></div></div>
+              <span class="macro-pct" id="carbPct">0%</span>
+            </div>
+            <!-- Proteínas -->
+            <div class="macro-bar-card prot-card">
+              <div class="macro-meta">
+                <span class="macro-title">Proteínas</span>
+                <span class="macro-values" id="protVal">0g / 0g</span>
+              </div>
+              <div class="macro-progress"><div class="bar-fill prot-fill" id="protBar"></div></div>
+              <span class="macro-pct" id="protPct">0%</span>
+            </div>
+            <!-- Gorduras -->
+            <div class="macro-bar-card fat-card">
+              <div class="macro-meta">
+                <span class="macro-title">Gorduras</span>
+                <span class="macro-values" id="fatVal">0g / 0g</span>
+              </div>
+              <div class="macro-progress"><div class="bar-fill fat-fill" id="fatBar"></div></div>
+              <span class="macro-pct" id="fatPct">0%</span>
+            </div>
+            <!-- Fibras -->
+            <div class="macro-bar-card fiber-card">
+              <div class="macro-meta">
+                <span class="macro-title">Fibras</span>
+                <span class="macro-values" id="fiberVal">0g / 28g</span>
+              </div>
+              <div class="macro-progress"><div class="bar-fill fiber-fill" id="fiberBar"></div></div>
+              <span class="macro-pct" id="fiberPct">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Hidratação Diária -->
+        <div class="card card-water">
+          <div class="card-header">
+            <h3>Hidratação Diária</h3>
+            <span class="badge badge-water" id="waterGoalBadge">3.000 ml meta</span>
+          </div>
+          <div class="water-tracker-content">
+            <div class="water-visual">
+              <div class="water-bottle-container">
+                <div class="water-wave" id="waterWaveFill" style="height: 0%;"></div>
+              </div>
+              <div class="water-stats">
+                <span class="water-current" id="waterCurrentVal">0</span>
+                <span class="water-unit">ml consumidos</span>
+                <span class="water-target" id="waterTargetLabel">de 3.000 ml recomendados</span>
+              </div>
+            </div>
+            <div class="water-controls">
+              <p class="text-xs text-muted mb-2">Clique para adicionar rapidamente:</p>
+              <div class="water-quick-buttons">
+                <button class="btn btn-water-quick" onclick="app.addWater(250)">+250ml 🥛</button>
+                <button class="btn btn-water-quick" onclick="app.addWater(500)">+500ml 🍶</button>
+                <button class="btn btn-water-quick" onclick="app.addWater(-250)">-250ml</button>
+                <button class="btn btn-outline btn-xs" onclick="app.resetWater()">Zerar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Status do Perfil & IMC -->
+        <div class="card card-biometrics">
+          <div class="card-header">
+            <h3>Seu Perfil Atual</h3>
+            <button class="btn-link" onclick="app.switchTab('tab-profile-exams')">Editar</button>
+          </div>
+          <div class="bio-stats-grid">
+            <div class="bio-stat-box">
+              <span class="bio-box-label">Peso Atual</span>
+              <span class="bio-box-val" id="dashCurrentWeight">-- kg</span>
+              <span class="bio-box-sub" id="dashWeightDiff">Meta: -- kg</span>
+            </div>
+            <div class="bio-stat-box">
+              <span class="bio-box-label">Altura</span>
+              <span class="bio-box-val" id="dashHeight">-- cm</span>
+              <span class="bio-box-sub">Registrada</span>
+            </div>
+            <div class="bio-stat-box">
+              <span class="bio-box-label">IMC</span>
+              <span class="bio-box-val" id="dashBmi">--</span>
+              <span class="bio-box-sub text-emerald" id="dashBmiStatus">Normal</span>
+            </div>
+            <div class="bio-stat-box">
+              <span class="bio-box-label">Exames</span>
+              <span class="bio-box-val text-indigo" id="dashExamsCount">--</span>
+              <span class="bio-box-sub" id="dashExamsStatus">Status de saúde</span>
+            </div>
+          </div>
+          <div class="projection-preview-alert" onclick="app.switchTab('tab-projections')">
+            <div class="icon-pulse">📈</div>
+            <div class="preview-text">
+              <strong id="previewForecastHighlight">Projeção calculada:</strong>
+              <p id="previewForecastDetails">Acesse a aba Projeção para ver a previsão dos próximos 90 dias.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumo Rápido das Refeições de Hoje -->
+      <div class="card mt-6">
+        <div class="card-header flex-between">
+          <div>
+            <h3>Refeições do Dia</h3>
+            <p class="text-xs text-muted">Acompanhe e registre o que você comeu hoje</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="app.openAddFoodModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Adicionar Alimento
+          </button>
+        </div>
+        <div class="meals-summary-list" id="mealsDashboardSummary">
+          <!-- Renderizado dinamicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- ABA 2: DIÁRIO ALIMENTAR DETALHADO              -->
+    <!-- ============================================== -->
+    <section id="tab-diary" class="tab-pane">
+      <div class="section-title-bar">
+        <div>
+          <h2>Diário Alimentar</h2>
+          <p class="text-muted">Registre e acompanhe todas as refeições do dia com macronutrientes precisos</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="app.openAddFoodModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            + Adicionar Alimento
+          </button>
+        </div>
+      </div>
+
+      <div class="meals-diary-container" id="mealsDiaryList">
+        <!-- Seções: Café da Manhã, Almoço, Lanche, Jantar, Ceia -->
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- ABA 3: PERFIL FÍSICO & EXAMES LABORATORIAIS     -->
+    <!-- ============================================== -->
+    <section id="tab-profile-exams" class="tab-pane">
+      <div class="section-title-bar">
+        <div>
+          <h2>Perfil Biométrico & Exames de Saúde</h2>
+          <p class="text-muted">Ajuste seus parâmetros antropométricos e acompanhe seus marcadores laboratoriais com diagnóstico e orientação nutricional integrada</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="app.openAddExamModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Adicionar / Atualizar Exame
+        </button>
+      </div>
+
+      <div class="profile-exams-grid">
+        <!-- Coluna Esquerda: Dados Corporais & Metas -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Dados Antropométricos & Metas</h3>
+            <span class="badge badge-info">Fórmula Mifflin-St Jeor</span>
+          </div>
+
+          <form id="profileForm" onsubmit="app.handleProfileSave(event)" class="profile-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profName">Nome Completo</label>
+                <input type="text" id="profName" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="profAge">Idade (anos)</label>
+                <input type="number" id="profAge" class="form-input" min="10" max="110" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profGender">Sexo Biológico</label>
+                <select id="profGender" class="form-input">
+                  <option value="male">Masculino</option>
+                  <option value="female">Feminino</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profHeight">Altura (cm)</label>
+                <input type="number" id="profHeight" class="form-input" min="100" max="250" placeholder="Ex: 178" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profWeight">Peso Atual (kg)</label>
+                <input type="number" step="0.1" id="profWeight" class="form-input" min="30" max="300" placeholder="Ex: 84.5" required>
+              </div>
+              <div class="form-group">
+                <label for="profTargetWeight">Peso Meta (kg)</label>
+                <input type="number" step="0.1" id="profTargetWeight" class="form-input" min="30" max="300" placeholder="Ex: 75.0" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="profActivity">Nível de Atividade Física</label>
+              <select id="profActivity" class="form-input">
+                <option value="1.2">Sedentário (pouco ou nenhum exercício diário)</option>
+                <option value="1.375">Levemente Ativo (exercícios leves 1 a 3 dias/semana)</option>
+                <option value="1.55" selected>Moderadamente Ativo (treino moderado 3 a 5 dias/semana)</option>
+                <option value="1.725">Muito Ativo (treino intenso 6 a 7 dias/semana)</option>
+                <option value="1.9">Extremamente Ativo (trabalho braçal pesado ou atleta diário)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="profGoal">Objetivo Nutricional Principal</label>
+              <select id="profGoal" class="form-input">
+                <option value="cut_agg">Perda de Gordura Acelerada (-750 kcal)</option>
+                <option value="cut_mod" selected>Emagrecimento Saudável / Déficit Moderado (-500 kcal)</option>
+                <option value="cut_light">Emagrecimento Leve / Transição (-300 kcal)</option>
+                <option value="maintain">Manutenção de Peso & Saúde Metabólica (0 kcal)</option>
+                <option value="bulk_clean">Ganho de Massa Magra / Hipertrofia Limpa (+300 kcal)</option>
+                <option value="bulk_heavy">Hipertrofia Acelerada (+500 kcal)</option>
+              </select>
+            </div>
+
+            <div class="form-footer">
+              <button type="submit" class="btn btn-primary w-full">Salvar e Recalcular Tudo</button>
+            </div>
+          </form>
+
+          <!-- Resultados Calculados do Perfil -->
+          <div class="profile-calculated-results mt-4">
+            <div class="calc-box">
+              <span class="calc-label">Taxa Metabólica Basal (TMB)</span>
+              <span class="calc-val" id="calcBmrVal">-- kcal</span>
+              <span class="calc-sub">Energia gasta em repouso absoluto</span>
+            </div>
+            <div class="calc-box">
+              <span class="calc-label">Gasto Total Diário (GET)</span>
+              <span class="calc-val" id="calcTdeeVal">-- kcal</span>
+              <span class="calc-sub">Considerando sua rotina de atividade</span>
+            </div>
+            <div class="calc-box">
+              <span class="calc-label">Classificação IMC</span>
+              <span class="calc-val" id="calcBmiClassVal">--</span>
+              <span class="calc-sub" id="calcIdealWeightRange">Faixa ideal: -- a -- kg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Exames de Sangue e Saúde -->
+        <div class="card">
+          <div class="card-header flex-between">
+            <div>
+              <h3>Painel de Exames Laboratoriais</h3>
+              <p class="text-xs text-muted">Acompanhamento de biomarcadores e impacto na dieta</p>
+            </div>
+            <span class="badge badge-pill" id="examsSummaryBadge">Avaliação Atualizada</span>
+          </div>
+
+          <div class="exams-overview-container" id="examsContainer">
+            <!-- Cards de exames cadastrados -->
+          </div>
+
+          <!-- Seção de Orientações Nutricionais Personalizadas geradas pelos exames -->
+          <div class="card mt-4 border-accent">
+            <div class="card-header bg-accent-light">
+              <h4 class="text-primary flex-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Diretrizes Nutricionais Clínicas (Baseadas nos Seus Exames)
+              </h4>
+            </div>
+            <div class="p-4" id="clinicalDietRecommendations">
+              <!-- Recomendações personalizadas geradas dinamicamente -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- ABA 4: PROJEÇÃO FUTURA DOS PRÓXIMOS DIAS       -->
+    <!-- ============================================== -->
+    <section id="tab-projections" class="tab-pane">
+      <div class="section-title-bar">
+        <div>
+          <h2>Projeção de Peso & Evolução Futura</h2>
+          <p class="text-muted">Projeção matemática dos próximos 7 a 90 dias baseada no seu balanço calórico real, altura, peso e metabolismo</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary btn-sm" onclick="app.refreshProjections()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Recalcular Projeção
+          </button>
+        </div>
+      </div>
+
+      <!-- Destaque de Estimativa de Meta -->
+      <div class="forecast-milestone-banner" id="forecastMilestoneBanner">
+        <!-- Renderizado dinamicamente -->
+      </div>
+
+      <!-- Cards de Marcos de Projeção (7, 14, 30, 60, 90 dias) -->
+      <div class="projection-cards-grid" id="projectionCardsGrid">
+        <!-- Renderizado dinamicamente -->
+      </div>
+
+      <!-- Gráfico de Curva de Projeção -->
+      <div class="card mt-6">
+        <div class="card-header flex-between">
+          <div>
+            <h3>Curva Preditiva de Peso (Histórico + Próximos 90 Dias)</h3>
+            <p class="text-xs text-muted">Modelo cinético considerando déficit diário e adaptação metabólica progressiva</p>
+          </div>
+          <div class="legend-badges">
+            <span class="legend-item"><span class="dot dot-historical"></span>Histórico Real</span>
+            <span class="legend-item"><span class="dot dot-projected"></span>Projeção Futura</span>
+            <span class="legend-item"><span class="dot dot-goal"></span>Linha de Meta</span>
+          </div>
+        </div>
+
+        <div class="chart-canvas-wrapper">
+          <canvas id="weightProjectionChart" width="900" height="340"></canvas>
+          <div id="chartFallbackMessage" class="chart-fallback hidden">
+            <!-- Gráfico nativo renderizado via SVG caso offline/sem Chart.js -->
+            <div id="nativeSvgChartContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulador Interativo "E Se..." -->
+      <div class="card mt-6">
+        <div class="card-header">
+          <h3>Simulador Interativo de Cenários ("E se...?")</h3>
+          <p class="text-xs text-muted">Veja como pequenas mudanças na sua rotina alteram a velocidade da sua conquista</p>
+        </div>
+        <div class="simulator-grid">
+          <div class="sim-control-box">
+            <label for="simDeficitSlider" class="flex-between font-semibold">
+              <span>Ajuste Calórico Diário Adicional:</span>
+              <span id="simDeficitDisplay" class="text-primary font-bold">0 kcal/dia</span>
+            </label>
+            <input type="range" id="simDeficitSlider" min="-500" max="500" step="50" value="0" class="range-slider" oninput="app.updateSimulation()">
+            <div class="flex-between text-xs text-muted">
+              <span>Comer mais (+500 kcal)</span>
+              <span>Manter plano</span>
+              <span>Déficit extra (-500 kcal)</span>
+            </div>
+
+            <div class="mt-4">
+              <label for="simExerciseMins" class="flex-between font-semibold">
+                <span>Atividade Física Extra:</span>
+                <span id="simExerciseDisplay" class="text-emerald font-bold">0 min/dia</span>
+              </label>
+              <input type="range" id="simExerciseMins" min="0" max="90" step="15" value="0" class="range-slider" oninput="app.updateSimulation()">
+              <div class="flex-between text-xs text-muted">
+                <span>0 min</span>
+                <span>30 min (+200 kcal)</span>
+                <span>60 min (+400 kcal)</span>
+                <span>90 min (+600 kcal)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sim-result-box" id="simulationResults">
+            <!-- Injetado dinamicamente -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- ABA 5: MINHA REALIDADE ALIMENTAR               -->
+    <!-- ============================================== -->
+    <section id="tab-reality" class="tab-pane">
+      <div class="section-title-bar">
+        <div>
+          <h2>Minha Realidade Alimentar & Dieta Sob Medida</h2>
+          <p class="text-muted">Marque os alimentos que você costuma ter em casa, que cabem no seu orçamento e na sua rotina. O sistema calculará as porções exatas para bater suas metas e respeitar seus exames!</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="app.generateAndShowRealityDiet()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+            Montar Cardápio com Minhas Comidas
+          </button>
+        </div>
+      </div>
+
+      <!-- Configuração da Rotina -->
+      <div class="card mb-4">
+        <div class="card-header flex-between">
+          <div>
+            <h3>Configuração da Sua Rotina Diária</h3>
+            <p class="text-xs text-muted">Ajuste o número de refeições e o estilo para que a dieta se encaixe no seu dia</p>
+          </div>
+          <div class="reality-quick-presets">
+            <span class="text-xs text-muted">Predefinições rápidas:</span>
+            <button class="btn btn-xs btn-outline" onclick="app.setRealityPreset('brazilian')">Básico Brasileiro 🇧🇷</button>
+            <button class="btn btn-xs btn-outline" onclick="app.setRealityPreset('budget')">Econômica 💰</button>
+            <button class="btn btn-xs btn-outline" onclick="app.setRealityPreset('fitness')">Alta Proteína 💪</button>
+            <button class="btn btn-xs btn-outline" onclick="app.setRealityPreset('all')">Marcar Todos</button>
+            <button class="btn btn-xs btn-outline text-red" onclick="app.setRealityPreset('none')">Limpar</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="realityMealCount">Quantas refeições você costuma fazer por dia?</label>
+            <select id="realityMealCount" class="form-input" onchange="app.onRealitySettingsChange()">
+              <option value="3">3 Refeições (Café da Manhã, Almoço e Jantar)</option>
+              <option value="4" selected>4 Refeições (Café, Almoço, Lanche da Tarde e Jantar)</option>
+              <option value="5">5 Refeições (Café, Lanche Manhã, Almoço, Lanche Tarde e Jantar)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="realityStyle">Estilo de Alimentação / Restrições</label>
+            <select id="realityStyle" class="form-input" onchange="app.onRealitySettingsChange()">
+              <option value="balanced" selected>Equilibrada & Acessível (sem frescura)</option>
+              <option value="practical">Prática / Marmitas da Semana</option>
+              <option value="clean">Foco em Alimentos Naturais e Integrais</option>
+              <option value="lactose_free">Baixa Lactose / Fácil Digestão</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="reality-counter-banner mt-3">
+          <span class="icon">🛒</span>
+          <span id="realitySelectedCountText">11 alimentos selecionados para a sua realidade.</span>
+          <span class="text-xs text-muted">(Quanto mais variedade marcar em cada categoria, mais rico fica o seu cardápio)</span>
+        </div>
+      </div>
+
+      <!-- Seletor de Alimentos da Realidade por Categoria -->
+      <div class="reality-categories-container" id="realityCategoriesContainer">
+        <!-- Renderizado dinamicamente com categorias e chips clicáveis -->
+      </div>
+
+      <!-- Seção do Cardápio Gerado Sob Medida -->
+      <div class="card mt-6 border-accent" id="generatedRealityDietSection">
+        <div class="card-header flex-between">
+          <div>
+            <h3 class="text-primary flex-center gap-2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              Cardápio Montado Exclusivamente com os Seus Alimentos
+            </h3>
+            <p class="text-xs text-muted" id="realityDietSummaryText">Porções calculadas matematicamente para atingir sua meta calórica e macronutrientes</p>
+          </div>
+          <div class="reality-plan-actions">
+            <button class="btn btn-primary btn-sm" onclick="app.applyRealityDietToDiary()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+              Lançar no Diário de Hoje
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Imprimir / PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Indicador de Precisão dos Macros do Plano Gerado -->
+        <div class="reality-precision-banner" id="realityPrecisionBanner">
+          <!-- Renderizado dinamicamente -->
+        </div>
+
+        <!-- Grid de Refeições Geradas -->
+        <div class="reality-meals-grid mt-4" id="realityMealsGrid">
+          <!-- Cards de refeições geradas com gramas e calorias -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- ABA 6: CARDÁPIO SUGERIDO & ORIENTAÇÕES          -->
+    <!-- ============================================== -->
+    <section id="tab-mealplan" class="tab-pane">
+      <div class="section-title-bar">
+        <div>
+          <h2>Cardápio Sugerido & Estratégia Nutricional</h2>
+          <p class="text-muted">Plano de refeições inteligente alinhado à sua meta calórica e aos resultados dos seus exames laboratoriais</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Imprimir / Exportar PDF
+        </button>
+      </div>
+
+      <div class="mealplan-container" id="suggestedMealPlanContainer">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ADICIONAR / BUSCAR ALIMENTO              -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop hidden" id="addFoodModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalFoodTitle">Adicionar Alimento</h3>
+        <button class="modal-close" onclick="app.closeModal('addFoodModal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="foodMealSelect">Selecione a Refeição</label>
+          <select id="foodMealSelect" class="form-input">
+            <option value="breakfast">Café da Manhã</option>
+            <option value="lunch" selected>Almoço</option>
+            <option value="snack">Lanche da Tarde</option>
+            <option value="dinner">Jantar</option>
+            <option value="supper">Ceia / Pré-Sono</option>
+          </select>
+        </div>
+
+        <div class="tab-subnav">
+          <button class="subtab-btn active" id="btnTabSearchFood" onclick="app.switchFoodSubtab('search')">Buscar no Banco de Alimentos</button>
+          <button class="subtab-btn" id="btnTabCustomFood" onclick="app.switchFoodSubtab('custom')">Alimento Personalizado</button>
+        </div>
+
+        <!-- Subaba 1: Busca no banco -->
+        <div id="subtabSearchFood">
+          <div class="search-input-wrapper">
+            <input type="text" id="foodSearchInput" class="form-input search-input" placeholder="Digite para buscar: ex: frango, arroz, aveia, ovo, banana..." oninput="app.searchFoods(this.value)">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+
+          <div class="food-search-results" id="foodSearchResults">
+            <!-- Lista com 100+ alimentos filtrados -->
+          </div>
+
+          <div id="selectedFoodDetails" class="selected-food-details hidden">
+            <div class="selected-food-header">
+              <strong id="selFoodName">Arroz Branco Cozido</strong>
+              <span class="text-xs text-muted" id="selFoodCategory">Cereais</span>
+            </div>
+            <div class="portion-input-row">
+              <label for="foodPortionQty">Quantidade (g ou ml):</label>
+              <div class="portion-controls">
+                <input type="number" id="foodPortionQty" class="form-input portion-input" value="100" min="1" max="2000" oninput="app.recalcSelectedFoodPortion()">
+                <span class="unit-label" id="selFoodUnit">gramas</span>
+              </div>
+            </div>
+            <div class="selected-food-macros" id="selFoodMacrosPreview">
+              <!-- Calorias e macros da porção calculada -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Subaba 2: Customizado -->
+        <div id="subtabCustomFood" class="hidden">
+          <div class="form-group">
+            <label for="custFoodName">Nome do Alimento</label>
+            <input type="text" id="custFoodName" class="form-input" placeholder="Ex: Shake Especial com Proteína">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="custFoodKcal">Calorias (kcal)</label>
+              <input type="number" id="custFoodKcal" class="form-input" placeholder="Ex: 250">
+            </div>
+            <div class="form-group">
+              <label for="custFoodCarb">Carboidratos (g)</label>
+              <input type="number" step="0.1" id="custFoodCarb" class="form-input" placeholder="Ex: 20">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="custFoodProt">Proteínas (g)</label>
+              <input type="number" step="0.1" id="custFoodProt" class="form-input" placeholder="Ex: 25">
+            </div>
+            <div class="form-group">
+              <label for="custFoodFat">Gorduras (g)</label>
+              <input type="number" step="0.1" id="custFoodFat" class="form-input" placeholder="Ex: 5">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="app.closeModal('addFoodModal')">Cancelar</button>
+        <button class="btn btn-primary" id="btnConfirmAddFood" onclick="app.confirmAddFood()">Adicionar à Refeição</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: REGISTRAR / ATUALIZAR EXAME             -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop hidden" id="addExamModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Registrar / Atualizar Exame Laboratorial</h3>
+        <button class="modal-close" onclick="app.closeModal('addExamModal')">&times;</button>
+      </div>
+      <form onsubmit="app.handleExamSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="examTypeSelect">Tipo de Biomarcador</label>
+            <select id="examTypeSelect" class="form-input" onchange="app.onExamTypeChange(this.value)">
+              <option value="glucose">Glicemia de Jejum (mg/dL)</option>
+              <option value="hba1c">Hemoglobina Glicada - HbA1c (%)</option>
+              <option value="total_cholesterol">Colesterol Total (mg/dL)</option>
+              <option value="hdl">Colesterol HDL - "Bom" (mg/dL)</option>
+              <option value="ldl">Colesterol LDL - "Ruim" (mg/dL)</option>
+              <option value="triglycerides">Triglicerídeos (mg/dL)</option>
+              <option value="uric_acid">Ácido Úrico (mg/dL)</option>
+              <option value="vitamin_d">Vitamina D 25-OH (ng/mL)</option>
+              <option value="vitamin_b12">Vitamina B12 (pg/mL)</option>
+              <option value="ferritin">Ferritina (ng/mL)</option>
+              <option value="tgo_ast">TGO / AST - Fígado (U/L)</option>
+              <option value="tgp_alt">TGP / ALT - Fígado (U/L)</option>
+              <option value="creatinine">Creatinina - Rim (mg/dL)</option>
+              <option value="crp">Proteína C Reativa (PCR) - Inflamação (mg/L)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="examValueInput">Resultado Numérico</label>
+              <input type="number" step="0.1" id="examValueInput" class="form-input" placeholder="Ex: 95" required>
+            </div>
+            <div class="form-group">
+              <label for="examDateInput">Data da Coleta</label>
+              <input type="date" id="examDateInput" class="form-input" required>
+            </div>
+          </div>
+
+          <div class="exam-reference-hint" id="examReferenceHint">
+            <!-- Faixas de referência exibidas aqui -->
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="examNotesInput">Observações Médicas / Laboratório (Opcional)</label>
+            <input type="text" id="examNotesInput" class="form-input" placeholder="Ex: Laboratório Fleury, em jejum de 12h">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="app.closeModal('addExamModal')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Exame</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- BANNER DE INSTALAÇÃO DO APP NO CELULAR (PWA) -->
+  <div class="pwa-install-banner hidden" id="pwaInstallBanner">
+    <div class="pwa-install-content">
+      <div class="pwa-app-icon">
+        <img src="icons/icon.svg" width="38" height="38" alt="NutriFit Pro">
+      </div>
+      <div>
+        <strong>Instalar NutriFit Pro no Celular</strong>
+        <p>Abra em tela cheia como aplicativo e use 100% offline em qualquer rede!</p>
+      </div>
+    </div>
+    <div class="pwa-actions">
+      <button class="btn btn-primary btn-sm" id="btnInstallPwa">Instalar App</button>
+      <button class="btn btn-icon btn-sm" onclick="document.getElementById('pwaInstallBanner').remove()" title="Fechar">&times;</button>
+    </div>
+  </div>
+
+  <!-- BARRA DE NAVEGAÇÃO INFERIOR PARA DISPOSITIVOS MÓVEIS (Thumb navigation) -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <button class="mobile-nav-btn active" data-mobtab="tab-dashboard" onclick="app.switchTab('tab-dashboard')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <span>Início</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobtab="tab-diary" onclick="app.switchTab('tab-diary')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      <span>Diário</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobtab="tab-reality" onclick="app.switchTab('tab-reality')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+      <span>Realidade</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobtab="tab-profile-exams" onclick="app.switchTab('tab-profile-exams')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+      <span>Exames</span>
+    </button>
+    <button class="mobile-nav-btn" data-mobtab="tab-projections" onclick="app.switchTab('tab-projections')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+      <span>Projeção</span>
+    </button>
+  </nav>
+
+  <!-- RODAPÉ -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>NutriFit Pro &copy; 2026 - Sistema de Planejamento Nutricional, Monitoramento de Biomarcadores & Projeções Preditivas.</p>
+      <div class="footer-actions">
+        <button class="btn btn-xs btn-outline" onclick="app.exportData()">Exportar Backup (JSON)</button>
+        <button class="btn btn-xs btn-outline" onclick="document.getElementById('importFileInput').click()">Importar Backup</button>
+        <input type="file" id="importFileInput" class="hidden" accept=".json" onchange="app.importData(event)">
+        <button class="btn btn-xs btn-outline text-red" onclick="app.resetDemoData()">Restaurar Demonstração</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS MODULARES -->
+  <script src="js/foods-data.js"></script>
+  <script src="js/nutrition-calc.js"></script>
+  <script src="js/exams-analyzer.js"></script>
+  <script src="js/projection-engine.js"></script>
+  <script src="js/diet-builder.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Registro do Service Worker PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((reg) => console.log('Service Worker registrado:', reg.scope))
+          .catch((err) => console.log('Falha ao registrar Service Worker:', err));
+      });
+    }
+
+    // Gerenciador de Instalação PWA
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.classList.remove('hidden');
+    });
+
+    document.getElementById('btnInstallPwa')?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          document.getElementById('pwaInstallBanner')?.remove();
+        }
+        deferredPrompt = null;
+      }
+    });
+  </script>
+</body>
+</html>
