@@ -102,6 +102,18 @@
         <button class="btn btn-secondary btn-sm" id="btnGoToday">Ir para Hoje</button>
       </div>
 
+      <!-- Banner de Boas-Vindas para Perfil Zerado -->
+      <div id="dashboardWelcomeZeroBanner" class="welcome-zero-banner hidden">
+        <div class="welcome-zero-content">
+          <span style="font-size: 1.8rem;">👋</span>
+          <div>
+            <strong>Bem-vindo ao NutriFit Pro!</strong>
+            <p>Seu aplicativo está pronto e zerado. Preencha suas informações de peso, altura, metas e comidas favoritas para calcularmos o seu plano e cardápios sob medida.</p>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="app.openOnboardingModal()">Começar Configuração</button>
+      </div>
+
       <!-- Banner de Alerta de Exames (se houver alteração) -->
       <div id="dashboardHealthAlertBanner" class="health-alert-banner hidden">
         <!-- Injetado dinamicamente -->
@@ -310,10 +322,15 @@
           <h2>Perfil Biométrico & Exames de Saúde</h2>
           <p class="text-muted">Ajuste seus parâmetros antropométricos e acompanhe seus marcadores laboratoriais com diagnóstico e orientação nutricional integrada</p>
         </div>
-        <button class="btn btn-secondary btn-sm" onclick="app.openAddExamModal()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          Adicionar / Atualizar Exame
-        </button>
+        <div class="actions">
+          <button class="btn btn-secondary btn-sm" onclick="app.openAddExamModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Adicionar / Atualizar Exame
+          </button>
+          <button class="btn btn-outline btn-sm text-red" onclick="app.resetToNewUser()">
+            🔄 Zerar & Criar Novo Perfil
+          </button>
+        </div>
       </div>
 
       <div class="profile-exams-grid">
@@ -799,6 +816,139 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" onclick="app.closeModal('addExamModal')">Cancelar</button>
           <button type="submit" class="btn btn-primary">Salvar Exame</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: BOAS-VINDAS / ONBOARDING INICIAL         -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop hidden" id="onboardingModal">
+    <div class="modal-card modal-onboarding">
+      <div class="modal-header">
+        <div>
+          <h3>👋 Boas-vindas ao NutriFit Pro!</h3>
+          <p class="text-xs text-muted">Vamos configurar o seu perfil para calcular seu gasto calórico, montar sua projeção e gerar seus cardápios sob medida.</p>
+        </div>
+      </div>
+      <form id="onboardingForm" onsubmit="app.handleOnboardingSubmit(event)">
+        <div class="modal-body">
+          <!-- Etapa 1: Dados Corporais -->
+          <div class="onboarding-step-box">
+            <h4 class="onboarding-step-title">
+              <span class="step-num">1</span>
+              Seus Dados Físicos & Metas
+            </h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="onbName">Seu Nome</label>
+                <input type="text" id="onbName" class="form-input" placeholder="Ex: Maria ou João" required>
+              </div>
+              <div class="form-group">
+                <label for="onbAge">Idade (anos)</label>
+                <input type="number" id="onbAge" class="form-input" min="10" max="110" placeholder="Ex: 28" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="onbGender">Sexo Biológico</label>
+                <select id="onbGender" class="form-input">
+                  <option value="male">Masculino</option>
+                  <option value="female">Feminino</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="onbHeight">Altura (em cm)</label>
+                <input type="number" id="onbHeight" class="form-input" min="100" max="250" placeholder="Ex: 175" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="onbWeight">Peso Atual (kg)</label>
+                <input type="number" step="0.1" id="onbWeight" class="form-input" min="30" max="300" placeholder="Ex: 80.5" required>
+              </div>
+              <div class="form-group">
+                <label for="onbTargetWeight">Peso Meta (kg)</label>
+                <input type="number" step="0.1" id="onbTargetWeight" class="form-input" min="30" max="300" placeholder="Ex: 72.0" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="onbActivity">Nível de Atividade Física Diária</label>
+              <select id="onbActivity" class="form-input">
+                <option value="1.2">Sedentário (pouco ou nenhum exercício)</option>
+                <option value="1.375">Levemente Ativo (treino leve 1 a 3 dias/semana)</option>
+                <option value="1.55" selected>Moderadamente Ativo (treino moderado 3 a 5 dias/semana)</option>
+                <option value="1.725">Muito Ativo (treino intenso 6 a 7 dias/semana)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="onbGoal">Qual é o seu objetivo principal?</label>
+              <select id="onbGoal" class="form-input">
+                <option value="cut_mod" selected>Emagrecimento Saudável (-500 kcal/dia)</option>
+                <option value="cut_agg">Perda de Gordura Acelerada (-750 kcal/dia)</option>
+                <option value="cut_light">Déficit Leve / Recomposição (-300 kcal/dia)</option>
+                <option value="maintain">Manter Peso & Saúde Metabólica (0 kcal)</option>
+                <option value="bulk_clean">Ganho de Massa Magra / Hipertrofia (+300 kcal/dia)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Etapa 2: Realidade Alimentar -->
+          <div class="onboarding-step-box mt-3">
+            <h4 class="onboarding-step-title">
+              <span class="step-num">2</span>
+              Alimentos da Sua Realidade (O que você costuma comer?)
+            </h4>
+            <p class="text-xs text-muted mb-2">Clique para selecionar os alimentos que você tem em casa e cabem no seu bolso:</p>
+            <div class="reality-quick-presets mb-2">
+              <button type="button" class="btn btn-xs btn-outline" onclick="app.setOnboardingPreset('brazilian')">Básico Brasileiro 🇧🇷</button>
+              <button type="button" class="btn btn-xs btn-outline" onclick="app.setOnboardingPreset('budget')">Econômica 💰</button>
+              <button type="button" class="btn btn-xs btn-outline" onclick="app.setOnboardingPreset('fitness')">Alta Proteína 💪</button>
+            </div>
+            <div class="food-chip-group" id="onboardingFoodChips">
+              <!-- Renderizado dinamicamente -->
+            </div>
+          </div>
+
+          <!-- Etapa 3: Exames de Sangue (Opcional) -->
+          <div class="onboarding-step-box mt-3">
+            <h4 class="onboarding-step-title">
+              <span class="step-num">3</span>
+              Seus Exames de Sangue (Opcional)
+            </h4>
+            <p class="text-xs text-muted mb-2">Se tiver feito exames laboratoriais recentemente, informe os valores. Caso contrário, você poderá adicionar a qualquer momento depois:</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="onbGlucose">Glicemia de Jejum (mg/dL)</label>
+                <input type="number" step="0.1" id="onbGlucose" class="form-input" placeholder="Ex: 92 (Opcional)">
+              </div>
+              <div class="form-group">
+                <label for="onbTriglycerides">Triglicerídeos (mg/dL)</label>
+                <input type="number" step="0.1" id="onbTriglycerides" class="form-input" placeholder="Ex: 140 (Opcional)">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="onbLdl">Colesterol LDL (mg/dL)</label>
+                <input type="number" step="0.1" id="onbLdl" class="form-input" placeholder="Ex: 115 (Opcional)">
+              </div>
+              <div class="form-group">
+                <label for="onbVitD">Vitamina D 25-OH (ng/mL)</label>
+                <input type="number" step="0.1" id="onbVitD" class="form-input" placeholder="Ex: 32 (Opcional)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-full" style="font-size: 1rem; padding: 0.85rem;">
+            🚀 Concluir & Gerar Meu Plano Completo
+          </button>
         </div>
       </form>
     </div>
