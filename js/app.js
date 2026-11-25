@@ -1671,15 +1671,9 @@ document.addEventListener('dragstart', (e) => {
   }
 });
 
-// 5. Bloqueio total de rolagem horizontal (mantém a tela 100% fixa sem deslocamento lateral)
-window.addEventListener('scroll', () => {
-  if (window.scrollX !== 0) {
-    window.scrollTo(0, window.scrollY);
-  }
-}, { passive: true });
-
+// 5. Bloqueio de rolagem lateral de roda de mouse no desktop (mantém o scroll vertical 100% fluido)
 document.addEventListener('wheel', (e) => {
-  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 10) {
     e.preventDefault();
   }
 }, { passive: false });
