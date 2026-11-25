@@ -219,7 +219,7 @@ const DietBuilder = {
     const res = {};
 
     // Alerta de exames para escolhas prioritárias
-    const hasHighLdlOrTrig = exams.some(e => (e.examId === 'ldl' && e.value >= 130) || (e.examId === 'triglycerides' && e.value >= 150));
+    const hasHighLdlOrTrig = exams.some(e => (e.examId === 'total_cholesterol' && e.value >= 190) || (e.examId === 'ldl' && e.value >= 130) || (e.examId === 'triglycerides' && e.value >= 150));
 
     if (type === 'breakfast') {
       // Carboidrato típico de café (aveia, pão, tapioca, cuscuz)
