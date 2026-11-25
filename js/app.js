@@ -329,22 +329,23 @@ const app = {
     document.getElementById('dashExamsStatus').textContent = examsAnalysis.overallStatus;
 
     // Alerta no topo se houver alterações clínicas
-    const alertBanner = document.getElementById('dashboardHealthAlertBanner');
-    if (examsAnalysis.alertCount > 0 || examsAnalysis.warningCount > 0) {
-      alertBanner.classList.remove('hidden');
-      const criticalText = examsAnalysis.alertCount > 0 ? `${examsAnalysis.alertCount} exame(s) com atenção crítica` : `${examsAnalysis.warningCount} marcador(es) limítrofe(s)`;
-      alertBanner.innerHTML = `
-        <div class="health-alert-content">
-          <span style="font-size: 1.5rem;">🩺</span>
-          <div>
-            <strong>Ajustes Clínicos Identificados nos Seus Exames: ${criticalText}</strong>
-            <p>Seu cardápio e projeções consideram seus biomarcadores (ex: colesterol, triglicerídeos e vitaminas). Acesse a aba <em>Perfil & Exames</em> para ver as diretrizes.</p>
+    if (alertBanner) {
+      if (examsAnalysis.alertCount > 0 || examsAnalysis.warningCount > 0) {
+        alertBanner.classList.remove('hidden');
+        const criticalText = examsAnalysis.alertCount > 0 ? `${examsAnalysis.alertCount} exame(s) com atenção crítica` : `${examsAnalysis.warningCount} marcador(es) limítrofe(s)`;
+        alertBanner.innerHTML = `
+          <div class="health-alert-content">
+            <span style="font-size: 1.5rem;">🩺</span>
+            <div>
+              <strong>Ajustes Clínicos Identificados nos Seus Exames: ${criticalText}</strong>
+              <p>Seu cardápio e projeções consideram seus biomarcadores (ex: colesterol, triglicerídeos e vitaminas). Acesse a aba <em>Perfil & Exames</em> para ver as diretrizes.</p>
+            </div>
           </div>
-        </div>
-        <button class="btn btn-sm btn-outline" onclick="app.switchTab('tab-profile-exams')">Ver Detalhes</button>
-      `;
-    } else {
-      alertBanner.classList.add('hidden');
+          <button class="btn btn-sm btn-outline" onclick="app.switchTab('tab-profile-exams')">Ver Detalhes</button>
+        `;
+      } else {
+        alertBanner.classList.add('hidden');
+      }
     }
 
     // 7. Preview da Projeção no Card
@@ -609,9 +610,9 @@ const app = {
   // ==========================================
   renderProjections() {
     if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
-      const banner = document.getElementById('forecastMilestoneBanner');
-      if (banner) {
-        banner.innerHTML = `
+      const emptyProjBanner = document.getElementById('forecastMilestoneBanner');
+      if (emptyProjBanner) {
+        emptyProjBanner.innerHTML = `
           <div class="forecast-main-headline">
             <h3>Projeção Preditiva de Peso</h3>
             <p>Preencha suas informações de peso, altura e meta no seu perfil para gerarmos sua curva de evolução dos próximos 90 dias.</p>
@@ -994,9 +995,9 @@ const app = {
 
   generateAndShowRealityDiet(showFeedback = true) {
     if (!this.profile || !this.profile.isConfigured || !this.profile.weight) {
-      const banner = document.getElementById('realityPrecisionBanner');
-      if (banner) {
-        banner.innerHTML = `
+      const emptyRealityBanner = document.getElementById('realityPrecisionBanner');
+      if (emptyRealityBanner) {
+        emptyRealityBanner.innerHTML = `
           <div style="padding: 1.25rem; color: #065f46; font-size: 0.9rem; text-align: center; width: 100%;">
             👋 <strong>Configuração necessária:</strong> Preencha suas informações de peso e altura para que possamos balancear as porções exatas das suas comidas!
             <div class="mt-3">
