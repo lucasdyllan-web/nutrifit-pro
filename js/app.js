@@ -1609,3 +1609,35 @@ const app = {
 document.addEventListener('DOMContentLoaded', () => {
   app.init();
 });
+
+// ==========================================
+// BLOQUEIO DE ZOOM E ARRASTOS NATIVOS (APP-LIKE FEEL)
+// ==========================================
+// 1. Bloqueia gesto de pinça (pinch-to-zoom com 2 dedos)
+document.addEventListener('touchstart', (e) => {
+  if (e.touches && e.touches.length > 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+// 2. Bloqueia eventos de gestos do Safari/WebKit
+document.addEventListener('gesturestart', (e) => e.preventDefault());
+document.addEventListener('gesturechange', (e) => e.preventDefault());
+document.addEventListener('gestureend', (e) => e.preventDefault());
+
+// 3. Bloqueia zoom por duplo toque rápido
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, { passive: false });
+
+// 4. Bloqueia arrasto de imagens e elementos nativos
+document.addEventListener('dragstart', (e) => {
+  if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+  }
+});
