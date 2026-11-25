@@ -220,9 +220,11 @@ const app = {
       document.getElementById('dashWeightDiff').textContent = 'Meta: -- kg';
       document.getElementById('dashHeight').textContent = '-- cm';
       document.getElementById('dashBmi').textContent = '--';
-      const bmiStatusEl = document.getElementById('dashBmiStatus');
-      bmiStatusEl.textContent = 'Não configurado';
-      bmiStatusEl.className = 'bio-box-sub text-muted';
+      const unconfiguredBmiEl = document.getElementById('dashBmiStatus');
+      if (unconfiguredBmiEl) {
+        unconfiguredBmiEl.textContent = 'Não configurado';
+        unconfiguredBmiEl.className = 'bio-box-sub text-muted';
+      }
 
       document.getElementById('dashExamsCount').textContent = '0 cadastrados';
       document.getElementById('dashExamsStatus').textContent = 'Aguardando dados';
@@ -620,8 +622,8 @@ const app = {
           <button class="btn btn-outline" style="color: white; border-color: white;" onclick="app.openOnboardingModal()">Preencher Meus Dados</button>
         `;
       }
-      const cardsGrid = document.getElementById('projectionCardsGrid');
-      if (cardsGrid) cardsGrid.innerHTML = '';
+      const emptyCardsGrid = document.getElementById('projectionCardsGrid');
+      if (emptyCardsGrid) emptyCardsGrid.innerHTML = '';
       return;
     }
 
@@ -1605,16 +1607,18 @@ const app = {
     Storage.addWeightRecord(this.currentDate, weight);
     Storage.saveRealityPrefs(this.realityPrefs);
 
-    // Salva exames opcionais preenchidos
-    const glucoseVal = parseFloat(document.getElementById('onbGlucose').value);
-    const trigVal = parseFloat(document.getElementById('onbTriglycerides').value);
-    const ldlVal = parseFloat(document.getElementById('onbLdl').value);
-    const vitDVal = parseFloat(document.getElementById('onbVitD').value);
+    // Salva os 5 exames opcionais preenchidos
+    const glucoseVal = parseFloat(document.getElementById('onbGlucose')?.value);
+    const totCholVal = parseFloat(document.getElementById('onbTotalCholesterol')?.value);
+    const trigVal = parseFloat(document.getElementById('onbTriglycerides')?.value);
+    const vitDVal = parseFloat(document.getElementById('onbVitD')?.value);
+    const vitB12Val = parseFloat(document.getElementById('onbVitB12')?.value);
 
     if (!isNaN(glucoseVal)) Storage.upsertExam({ examId: 'glucose', value: glucoseVal, date: this.currentDate, notes: 'Informado no cadastro' });
+    if (!isNaN(totCholVal)) Storage.upsertExam({ examId: 'total_cholesterol', value: totCholVal, date: this.currentDate, notes: 'Informado no cadastro' });
     if (!isNaN(trigVal)) Storage.upsertExam({ examId: 'triglycerides', value: trigVal, date: this.currentDate, notes: 'Informado no cadastro' });
-    if (!isNaN(ldlVal)) Storage.upsertExam({ examId: 'ldl', value: ldlVal, date: this.currentDate, notes: 'Informado no cadastro' });
     if (!isNaN(vitDVal)) Storage.upsertExam({ examId: 'vitamin_d', value: vitDVal, date: this.currentDate, notes: 'Informado no cadastro' });
+    if (!isNaN(vitB12Val)) Storage.upsertExam({ examId: 'vitamin_b12', value: vitB12Val, date: this.currentDate, notes: 'Informado no cadastro' });
 
     this.exams = Storage.getExams();
 
